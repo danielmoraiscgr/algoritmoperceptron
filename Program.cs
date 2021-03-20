@@ -8,22 +8,9 @@ namespace Neural
         static void Main(string[] args)
         {     
             
-            int[,] matriz = new int[8, 4];
-            var linhas = 8;
-            double w1 = 1;
-            double w2 = -1;
-            double w3 = -1;
-            double n = 0.2;
-            double y = 0;
-
-            int epoca = 1;
-            double calculo;
-            int contapesoalterado = 0;
-            bool naoaprendeu = true;
-            int i;
-
-
-            /* 8 linhas , 4 colunas
+             /* Exemplo de Matriz
+             * 
+             * 8 linhas , 4 colunas
              *  ------------------------
              *      | x1 | x2 | x3 | d |
              *      --------------------
@@ -39,115 +26,180 @@ namespace Neural
              * 
              */
 
-            // linha 1 - e1
-            matriz[0,0] = 0;  // x1
-            matriz[0,1] = 0;  // x2
-            matriz[0,2] = 0;  // x3
-            matriz[0,3] = 0;  // d
+
+          
+
+            int epoca = 1;
+            int i;
+            int y; 
+            int contapesoalterado = 0;
+            double calculo = 0;       
+            bool naoaprendeu = true;
+            bool informapeso = true;
+            
+            Console.Write("Informe a quantidades de elementos  : ");
+            int elementos = Convert.ToInt16(Console.ReadLine());
+
+            Console.WriteLine();
+
+            Console.Write("Informe a quantidades de conjuntos do elementos  : ");
+            int conjuntoselementos = Convert.ToInt16(Console.ReadLine());
+            double[] matrizpeso = new double[conjuntoselementos-1];  // 3 - 1 = 2   0  1 
+            int[,] matriz = new int[elementos, conjuntoselementos] ;
+            int[] matrizdesejada = new int[elementos];
 
 
-            // linha 2
-            matriz[1, 0] = 0;  // x1
-            matriz[1, 1] = 0;  // x2
-            matriz[1, 2] = 1;  // x3
-            matriz[1, 3] = 0;  // d
+            Console.WriteLine();
 
-            // linha 3
-            matriz[2, 0] = 0;  // x1
-            matriz[2, 1] = 1;  // x2
-            matriz[2, 2] = 0;  // x3
-            matriz[2, 3] = 0;  // d
+            Console.Write("Informe a nível de aprendizagem (n) : ");
+            double n = Convert.ToDouble(Console.ReadLine());
 
-            // linha 4 
-            matriz[3, 0] = 0;  // x1
-            matriz[3, 1] = 1;  // x2
-            matriz[3, 2] = 1;  // x3
-            matriz[3, 3] = 1;  // d
-
-            // linha 5 
-            matriz[4, 0] = 1;  // x1
-            matriz[4, 1] = 0;  // x2
-            matriz[4, 2] = 0;  // x3
-            matriz[4, 3] = 1;  // d
-
-            // linha 6 
-            matriz[5, 0] = 1;  // x1
-            matriz[5, 1] = 0;  // x2
-            matriz[5, 2] = 1;  // x3
-            matriz[5, 3] = 1;  // d
-
-            // linha 7
-            matriz[6, 0] = 1;  // x1
-            matriz[6, 1] = 1;  // x2
-            matriz[6, 2] = 0;  // x3
-            matriz[6, 3] = 1;  // d
-
-            // linha 8 
-            matriz[7, 0] = 1;  // x1
-            matriz[7, 1] = 1;  // x2
-            matriz[7, 2] = 1;  // x3
-            matriz[7, 3] = 1;  // d
-                      
-                  
-            while (naoaprendeu)
+            for (int e=0; e<elementos; e++)
             {
-                System.Console.WriteLine("Epoca : " + epoca);
-                for (i = 0; i < linhas; i++)
+                for (int ce = 0; ce < conjuntoselementos; ce++)
                 {
-                   if (i == 5)
+                    if (informapeso)
                     {
-                        naoaprendeu = true;
-                        break;
+                        for (int ip=0; ip < conjuntoselementos-1; ip++)
+                        {
+                            Console.WriteLine("Informe o valor de peso W [{0}]  = ", ip + 1);
+                            matrizpeso[ip] = Convert.ToDouble(Console.ReadLine());
 
+                        }
+                        informapeso = false;
                     }
-                    var x1 = matriz[i, 0];
-                    var x2 = matriz[i, 1];
-                    var x3 = matriz[i, 2];
-                    var d = matriz[i, 3];
 
-                    calculo = ((x1 * w1) + (x2 * w2) + (x3 * w3));
-                  
-                    System.Console.WriteLine(" X1(" + matriz[i, 0] + ")" + " x W1(" + w1.ToString("f2") + ")" + " + " + "X2(" + matriz[i, 1] + ")" + " x W2(" + w2.ToString("f2") + ") + "+"X3(" + matriz[i, 2] + ")" + " x W3(" + w3.ToString("f2") + ") = " +calculo.ToString("N2"));
+                    if ((ce + 1) == conjuntoselementos)
+                    {
+                        Console.WriteLine("Informe o valor do desejado do elemento [{0}]  = ", e + 1);
+                        matriz[e, ce] = Convert.ToInt16(Console.ReadLine());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Informe o valor do elemento [{0}] x{1} = ", e + 1, ce + 1);
+                        matriz[e, ce] = Convert.ToInt16(Console.ReadLine());
+                    }
+                }               
+            }
+
+            // Listar Matrizes
+
+            for (int m = 0; m < elementos; m++)
+            {
+                Console.WriteLine(" Elemento [{0}] :", m + 1);
+                for (int cm = 0; cm < conjuntoselementos; cm++)
+                {
+                    if ((cm + 1) == conjuntoselementos)
+                    {
+                        Console.Write(" d{0} [ {1} ]", cm + 1, matriz[m, cm]);
+                    }
+                    else
+                    {
+                        Console.Write(" x{0} [ {1} ]", cm + 1 , matriz[m,cm]);  
+                    }                                    
+                }
+               
+            }
+
+            // Matriz Desejada de X (elementos)
+
+            for (int de=0; de < elementos; de++)
+            {               
+                matrizdesejada[de] = matriz[de, conjuntoselementos - 1];  // 0 2  {  0 , 0 , [0] }              
+            }
+
+            // Listar Matriz Desejada
+
+            Console.WriteLine("Listagem de Matrizes Desejadas");
+
+            for (int lmd=0; lmd < elementos; lmd++)
+            {
+                Console.WriteLine("Matriz Desejada do elemento X{0} é {1} ",lmd+1,matrizdesejada[lmd]);
+            }
+
+
+            while (naoaprendeu) 
+            {               
+              
+                Console.WriteLine();
+                System.Console.WriteLine("Epoca : " + epoca);
+                for (i = 0; i < elementos; i++)
+                {
+                   
+
+                    int[] matrizcalculo = new int[conjuntoselementos-1];  // 3 -1 = 2 ->  x 1 e x 2 
+
+                    for (int c=0; c < matrizcalculo.Length-1; c++)  //  2 - 1  = 1 ->  0..1  2 sai do loop
+                    {                                              
+                        matrizcalculo[c] = matriz[i, c];
+                    }
+
+
+                    Console.WriteLine("-------------------------------------------");
+
+                    calculo = 0; 
+                    for (int ci=0; ci < conjuntoselementos-1; ci++ )
+                    {
+                        calculo += ((matriz[i, ci] * matrizpeso[ci]));
+                        Console.WriteLine(" X"+(i+1)+"("+matriz[i,ci]+")  x W"+(ci+1)+"("+ matrizpeso[ci].ToString("f2")+")");  //+ " x W{1}(" + matrizpeso[1].ToString("f2") + ")", i + 1, 1);
+
+                        //    Console.WriteLine(" X{0}(" + matriz[i, ci] + ")" + " x W{1}(" + matrizpeso[ci].ToString("f2") + ")",ci+1,ci+1);
+                    }
+
 
                     if (calculo <= 1)
                         y = 0;
                         else
                         y = 1;
 
-                        if (y != d)  // se y diferente de d atualiza peso
-                        {                      
+                        if (y != matrizdesejada[i]) // Altera peso 
+                        {
+                           Console.WriteLine("Alterou peso : y = {0}  d={1} ", y, matrizdesejada[i]);
 
-                        w1 = (float)((w1) + n * (d - y) * x1);
-                        w2 = (float)((w2) + n * (d - y) * x2);
-                        w3 = (float)((w3) + n * (d - y) * x3);
+                     
+                            for (int mp = 0; mp < matrizpeso.Length; mp++)  // 0 1 2 
+                                {
+                                    var w = Convert.ToDouble(matrizpeso[mp]);
+                                    var dx = matrizdesejada[i]; 
+                                    var ex = matriz[i, mp];
+                                    matrizpeso[mp] = w + n * (dx - y) * ex;
+                                }
 
-                        contapesoalterado++;
-                        System.Console.WriteLine("Altera peso : y = "+y+ " d="+d); 
-                        }                    
+                                for (int nc=0; nc < matrizpeso.Length; nc++)
+                                {
+                                   Console.WriteLine(" Peso W{0} = {1}", (nc + 1), matrizpeso[nc].ToString("f2"));
+                                }
+                                Console.WriteLine();
+                        
+                                contapesoalterado++;                           
+                            }
+
+                    Console.WriteLine(" Total Soma Elementos X{0} = {1}", i + 1, calculo.ToString("f2"));
+
+
                 }
                 if (contapesoalterado > 0)
                 {
                     naoaprendeu = true;
-                    epoca++;
+                    epoca++;                 
                 }
                 else
                 {
                     naoaprendeu = false;
                 }
-                contapesoalterado = 0; 
-                
-                i = 0;               
-                
+
+                contapesoalterado = 0;                 
+                i = 0;                
             }
 
+            Console.WriteLine("Total Epocas : " + epoca);
+            for (int nc = 0; nc < matrizpeso.Length; nc++)
+            {
+                Console.WriteLine(" Peso W{0} atualizado = {1}", (nc + 1), matrizpeso[nc].ToString("f2"));
+            }
+            Console.WriteLine("Valor de n : " + n.ToString("f2"));
 
-            System.Console.WriteLine("Total Epocas : " + epoca);
-            System.Console.WriteLine("Total alteracao de peso : " + contapesoalterado);
-            System.Console.WriteLine("Valor de W1 : " + w1.ToString("f2"));
-            System.Console.WriteLine("Valor de W2 : " + w2.ToString("f2"));
-            System.Console.WriteLine("Valor de W3 : " + w3.ToString("f2"));
-            System.Console.WriteLine("Valor de n : " + n.ToString("f2"));
-
+            Console.ReadKey();
         }
     }
 }
